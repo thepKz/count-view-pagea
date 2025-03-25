@@ -1,0 +1,152 @@
+/* Base Widget Style */
+.view-counter-widget {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.view-counter-widget:hover {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.view-counter-widget__icon {
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-counter-widget__icon svg {
+  width: 16px;
+  height: 16px;
+  fill: #555;
+}
+
+.view-counter-widget__count {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Animation khi số thay đổi */
+.view-counter-widget__count.change {
+  animation: countChange 0.3s ease;
+}
+
+@keyframes countChange {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); color: #2196f3; }
+  100% { transform: scale(1); }
+}
+
+/* Theme Light (Mặc định) */
+.view-counter-widget.theme-light {
+  background-color: #ffffff;
+  color: #333333;
+  border: 1px solid #e0e0e0;
+}
+
+/* Theme Dark */
+.view-counter-widget.theme-dark {
+  background-color: #222222;
+  color: #ffffff;
+  border: 1px solid #444444;
+}
+
+.view-counter-widget.theme-dark .view-counter-widget__icon svg {
+  fill: #ffffff;
+}
+
+.view-counter-widget.theme-dark .view-counter-widget__count {
+  color: #ffffff;
+}
+
+/* Style Flat */
+.view-counter-widget.style-flat {
+  border-radius: 0;
+  box-shadow: none;
+  border-left: 3px solid #2196f3;
+}
+
+/* Style Rounded */
+.view-counter-widget.style-rounded {
+  border-radius: 20px;
+  padding: 5px 12px;
+}
+
+/* Anime Theme */
+.view-counter-widget.anime {
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: linear-gradient(135deg, #ffcdf3 0%, #65c7f7 100%);
+  border-radius: 10px;
+  border: 2px solid #ffb6c1;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  padding: 6px 12px;
+  transition: all 0.3s ease;
+}
+
+.view-counter-widget.anime:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.view-counter-widget.anime .view-counter-widget__count {
+  color: #ff4081;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 #fff;
+}
+
+.view-counter-widget.anime .view-counter-widget__icon {
+  margin-right: 8px;
+}
+
+/* Anime Dark Theme */
+.view-counter-widget.anime.theme-dark {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  border: 2px solid #9c27b0;
+}
+
+.view-counter-widget.anime.theme-dark .view-counter-widget__count {
+  color: #ffffff;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* Anime Character Styles */
+.anime-character {
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: bounce 2s infinite ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Anime + các style khác */
+.view-counter-widget.anime.style-flat {
+  border-radius: 0;
+  border-left: 5px solid #ff4081;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+.view-counter-widget.anime.style-rounded {
+  border-radius: 25px;
+  padding: 6px 15px;
+}
+
+/* Animation */
+@keyframes sparkle {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+} 

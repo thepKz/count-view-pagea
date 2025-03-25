@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Counter Dashboard</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+      padding-bottom: 40px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-top: 20px;
+    }
+    .navbar {
+      background-color: #343a40;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      background: rgba(255,255,255,0.1);
+    }
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px 0;
+    }
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      background: #f9f9f9;
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+    .tab-content {
+      padding-top: 20px;
+    }
+    .nav-tabs {
+      border-bottom: 1px solid #dee2e6;
+    }
+    .nav-tabs .nav-link {
+      margin-bottom: -1px;
+      border: 1px solid transparent;
+      border-top-left-radius: 0.25rem;
+      border-top-right-radius: 0.25rem;
+      color: #495057;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-tabs .nav-link:hover {
+      border-color: #e9ecef #e9ecef #dee2e6;
+      isolation: isolate;
+    }
+    .nav-tabs .nav-link.active {
+      color: #495057;
+      background-color: #fff;
+      border-color: #dee2e6 #dee2e6 #fff;
+    }
+    .card {
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+      margin-bottom: 1.5rem;
+    }
+    .card-header {
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    code {
+      color: #e83e8c;
+      background-color: #f8f9fa;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.375rem 0.75rem;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: center;
+      text-decoration: none;
+      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid transparent;
+      border-radius: 0.25rem;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    .btn-primary {
+      color: #fff;
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+    .btn-primary:hover {
+      color: #fff;
+      background-color: #0b5ed7;
+      border-color: #0a58ca;
+    }
+    .btn-danger {
+      color: #fff;
+      background-color: #dc3545;
+      border-color: #dc3545;
+    }
+    .btn-danger:hover {
+      color: #fff;
+      background-color: #bb2d3b;
+      border-color: #b02a37;
+    }
+    .btn-success {
+      color: #fff;
+      background-color: #198754;
+      border-color: #198754;
+    }
+    .btn-success:hover {
+      color: #fff;
+      background-color: #157347;
+      border-color: #146c43;
+    }
+    .btn-outline-primary {
+      color: #0d6efd;
+      border-color: #0d6efd;
+    }
+    .btn-outline-primary:hover {
+      color: #fff;
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      border-radius: 0.2rem;
+    }
+    .alert {
+      position: relative;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid transparent;
+      border-radius: 0.25rem;
+    }
+    .alert-info {
+      color: #0c5460;
+      background-color: #d1ecf1;
+      border-color: #bee5eb;
+    }
+    .code-block {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 0.25rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .code-block pre {
+      margin-bottom: 0;
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 87.5%;
+      color: #212529;
+    }
+    .counter-details {
+      background: #f8f9fa;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .counter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .counter-info h3 {
+      margin: 0;
+      color: #343a40;
+    }
+    .counter-url {
+      color: #6c757d;
+      margin: 5px 0;
+    }
+    .counter-views {
+      font-size: 18px;
+      font-weight: bold;
+      color: #343a40;
+      margin: 10px 0;
+    }
+    .counter-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .counter-actions .btn {
+      margin-left: 10px;
+    }
+    .copied {
+      background-color: #28a745 !important;
+      color: white !important;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 5px;
+      width: 80%;
+      max-width: 500px;
+    }
+    .modal-title {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .modal-actions {
+      text-align: right;
+      margin-top: 20px;
+    }
+    .modal-actions .btn {
+      margin-left: 10px;
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      background-color: #28a745;
+      color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 1001;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s ease;
+    }
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header>
+    <div class="navbar">
+      <div class="logo">
+        <h1>Counter Analytics</h1>
+      </div>
+      <div class="nav-links">
+        <a href="/" class="active">Dashboard</a>
+        <a href="/register">Đăng ký Website</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>Dashboard</h2>
+    
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="counters-tab" data-bs-toggle="tab" data-bs-target="#counters" type="button" role="tab" aria-controls="counters" aria-selected="true">
+          <i class="bi bi-graph-up"></i> Counters
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="embed-guide-tab" data-bs-toggle="tab" data-bs-target="#embed-guide" type="button" role="tab" aria-controls="embed-guide" aria-selected="false">
+          <i class="bi bi-code-slash"></i> Hướng dẫn nhúng
+        </button>
+      </li>
+    </ul>
+    
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Counters tab -->
+      <div class="tab-pane fade show active" id="counters" role="tabpanel">
+        <div class="action-bar">
+          <button id="refreshData" class="btn">
+            <i class="bi bi-arrow-clockwise"></i> Làm mới
+          </button>
+          <a href="/register" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Thêm website
+          </a>
+        </div>
+        
+        <div id="counters-container">
+          <!-- Counter data will be loaded here -->
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Đang tải dữ liệu...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <h3 class="modal-title">Xóa Counter</h3>
+      <p>Bạn có chắc chắn muốn xóa counter này không? Hành động này không thể hoàn tác.</p>
+      <div class="modal-actions">
+        <button id="cancelDelete" class="btn">Hủy</button>
+        <button id="confirmDelete" class="btn btn-danger">Xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification -->
+  <div id="notification" class="notification"></div>
+
+  <!-- Khu vực tab hướng dẫn nhúng -->
+  <div class="tab-pane fade" id="embed-guide" role="tabpanel">
+    <div class="card mt-4">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Hướng dẫn nhúng counter vào website</h5>
+      </div>
+      <div class="card-body pb-0">
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle-fill me-2"></i>
+          Widget đếm lượt xem có thể được nhúng vào website của bạn với nhiều tùy chọn khác nhau.
+        </div>
+        
+        <h5 class="mt-4">Cách 1: Sử dụng script</h5>
+        <p>Đây là cách đơn giản nhất, thêm đoạn mã này vào trang của bạn:</p>
+        <div class="bg-light p-3 mb-3 rounded code-block">
+          <pre class="mb-0"><code>&lt;script src="http://localhost:5000/counter.js" data-site-id="YOUR_SITE_ID"&gt;&lt;/script&gt;
+&lt;span class="view-counter"&gt;&lt;/span&gt;</code></pre>
+          <button class="btn btn-sm btn-outline-primary mt-2 copy-btn">
+            <i class="bi bi-clipboard"></i> Copy
+          </button>
+        </div>
+        
+        <h5 class="mt-4">Cách 2: Sử dụng iframe</h5>
+        <p>Sử dụng iframe để hiển thị widget với nhiều tùy chọn hơn:</p>
+        <div class="bg-light p-3 mb-3 rounded code-block">
+          <pre class="mb-0"><code>&lt;iframe src="http://localhost:5000/counter-widget/YOUR_SITE_ID" frameborder="0" style="height:30px; width:100px; overflow:hidden;"&gt;&lt;/iframe&gt;</code></pre>
+          <button class="btn btn-sm btn-outline-primary mt-2 copy-btn">
+            <i class="bi bi-clipboard"></i> Copy
+          </button>
+        </div>
+        
+        <h5 class="mt-4">Tùy chỉnh widget</h5>
+        <p>Bạn có thể thêm các tham số vào URL của iframe để tùy chỉnh widget:</p>
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="card h-100">
+              <div class="card-header">Theme</div>
+              <div class="card-body">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <strong>Light (mặc định):</strong> <code>?theme=light</code>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Dark:</strong> <code>?theme=dark</code>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Anime:</strong> <code>?theme=anime</code>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="card h-100">
+              <div class="card-header">Style</div>
+              <div class="card-body">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <strong>Tiêu chuẩn (mặc định):</strong> không cần tham số
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Flat:</strong> <code>?style=flat</code>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Rounded:</strong> <code>?style=rounded</code>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="card h-100">
+              <div class="card-header">Nhân vật Anime</div>
+              <div class="card-body">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <strong>Ngẫu nhiên (mặc định):</strong> không cần tham số bổ sung
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Kawaii:</strong> <code>?theme=anime&character=kawaii</code>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Neko:</strong> <code>?theme=anime&character=neko</code>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Usagi:</strong> <code>?theme=anime&character=usagi</code>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="card h-100">
+              <div class="card-header">Kết hợp nhiều tùy chọn</div>
+              <div class="card-body">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <strong>Dark Rounded:</strong> <code>?theme=dark&style=rounded</code>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Anime Flat Kawaii:</strong> <code>?theme=anime&style=flat&character=kawaii</code>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-3 mb-4">
+          <a href="/test" target="_blank" class="btn btn-primary">
+            <i class="bi bi-eye"></i> Xem trang demo
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Kết thúc khu vực tab hướng dẫn nhúng -->
+
+  <script>
+    // Hàm fetch dữ liệu từ API
+    async function fetchCounters() {
+      try {
+        const response = await fetch('/api/counter');
+        if (!response.ok) {
+          throw new Error('Không thể tải dữ liệu');
+        }
+        const data = await response.json();
+        return data.data;
+      } catch (error) {
+        console.error('Error fetching counters:', error);
+        return [];
+      }
+    }
+
+    // Hàm xóa counter
+    async function deleteCounter(siteId) {
+      try {
+        const response = await fetch(`/api/counter/${siteId}`, {
+          method: 'DELETE'
+        });
+        if (!response.ok) {
+          throw new Error('Không thể xóa counter');
+        }
+        return true;
+      } catch (error) {
+        console.error('Error deleting counter:', error);
+        return false;
+      }
+    }
+
+    // Hàm format số
+    function formatNumber(number) {
+      return new Intl.NumberFormat().format(number);
+    }
+
+    // Hàm sao chép text vào clipboard
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          showNotification('Đã sao chép vào clipboard!');
+          
+          // Hiệu ứng khi copy thành công
+          const target = event.target;
+          const originalText = target.textContent;
+          target.textContent = 'Copied!';
+          target.classList.add('copied');
+          
+          setTimeout(() => {
+            target.textContent = originalText;
+            target.classList.remove('copied');
+          }, 1500);
+        })
+        .catch(err => {
+          console.error('Không thể sao chép:', err);
+          showNotification('Không thể sao chép. Vui lòng thử lại!', 'error');
+        });
+    }
+
+    // Hàm hiển thị thông báo
+    function showNotification(message, type = 'success') {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.classList.add('show');
+      
+      // Thêm màu sắc dựa vào loại thông báo
+      notification.style.backgroundColor = type === 'error' ? '#e74c3c' : '#2ecc71';
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Hàm hiển thị dữ liệu
+    function displayCounters(counters) {
+      const container = document.getElementById('counters-container');
+      
+      if (!counters || counters.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>Chưa có website nào được đăng ký.</p>
+            <a href="/register" class="btn btn-primary">Đăng ký Website mới</a>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '';
+      
+      counters.forEach(counter => {
+        const scriptCode = `<script src="http://localhost:5000/counter.js" data-site-id="${counter.siteId}"></script>`;
+        const widgetCode = `<iframe src="http://localhost:5000/counter-widget/${counter.siteId}" frameborder="0" style="height:30px; width:100px; overflow:hidden;"></iframe>`;
+        
+        html += `
+          <div class="counter-details" data-site-id="${counter.siteId}">
+            <div class="counter-header">
+              <div class="counter-info">
+                <h3>${counter.name}</h3>
+                <div class="counter-url">${counter.url}</div>
+              </div>
+              <div class="counter-views">
+                <i class="bi bi-eye"></i> ${formatNumber(counter.views)} lượt xem
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="text-muted mb-2"><strong>Site ID:</strong> ${counter.siteId}</div>
+              
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <strong>Code để nhúng counter:</strong>
+                    </div>
+                    <div class="card-body">
+                      <div class="code-block">
+                        <pre><code>${scriptCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+                        <button class="btn btn-sm btn-outline-primary mt-2 copy-btn">
+                          <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <strong>Widget hiển thị lượt xem:</strong>
+                    </div>
+                    <div class="card-body">
+                      <iframe src="/counter-widget/${counter.siteId}" frameborder="0" style="height:30px; width:100px; margin-bottom:10px; overflow:hidden;"></iframe>
+                      <div class="code-block">
+                        <pre><code>${widgetCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+                        <button class="btn btn-sm btn-outline-primary mt-2 copy-btn">
+                          <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="counter-actions">
+              <button class="btn btn-sm btn-danger delete-counter" data-site-id="${counter.siteId}">
+                <i class="bi bi-trash"></i> Xóa Counter
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+      
+      // Thêm event listener cho các nút xóa
+      document.querySelectorAll('.delete-counter').forEach(button => {
+        button.addEventListener('click', function() {
+          const siteId = this.getAttribute('data-site-id');
+          const modal = document.getElementById('deleteModal');
+          const confirmButton = document.getElementById('confirmDelete');
+          
+          confirmButton.setAttribute('data-site-id', siteId);
+          modal.style.display = 'block';
+        });
+      });
+      
+      // Thêm event listener cho các nút copy
+      document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const codeBlock = this.parentElement;
+          const code = codeBlock.querySelector('code').textContent;
+          copyToClipboard(code);
+        });
+      });
+    }
+
+    // Xử lý modal xóa
+    function openDeleteModal(siteId) {
+      const modal = document.getElementById('deleteModal');
+      modal.style.display = 'block';
+      
+      document.getElementById('confirmDelete').setAttribute('data-site-id', siteId);
+    }
+
+    // Lấy danh sách counter ban đầu khi trang tải xong
+    document.addEventListener('DOMContentLoaded', async () => {
+      const counters = await fetchCounters();
+      displayCounters(counters);
+      
+      // Thêm event listener cho tất cả các nút copy
+      document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const codeBlock = this.parentElement;
+          const code = codeBlock.querySelector('code').textContent;
+          copyToClipboard(code);
+        });
+      });
+      
+      // Event listener cho nút refresh
+      document.getElementById('refreshData').addEventListener('click', async () => {
+        const counters = await fetchCounters();
+        displayCounters(counters);
+        showNotification('Dữ liệu đã được cập nhật!');
+      });
+      
+      // Event listeners cho modal
+      document.getElementById('cancelDelete').addEventListener('click', function() {
+        document.getElementById('deleteModal').style.display = 'none';
+      });
+      
+      document.getElementById('confirmDelete').addEventListener('click', async function() {
+        const siteId = this.getAttribute('data-site-id');
+        const success = await deleteCounter(siteId);
+        
+        if (success) {
+          const counterElement = document.querySelector(`.counter-details[data-site-id="${siteId}"]`);
+          if (counterElement) {
+            counterElement.remove();
+          }
+          showNotification('Counter đã được xóa thành công!');
+          
+          // Nếu không còn counter nào, hiển thị empty state
+          const remainingCounters = document.querySelectorAll('.counter-details');
+          if (remainingCounters.length === 0) {
+            displayCounters([]);
+          }
+        } else {
+          showNotification('Không thể xóa counter!', 'error');
+        }
+        
+        document.getElementById('deleteModal').style.display = 'none';
+      });
+      
+      // Đóng modal khi click bên ngoài
+      window.addEventListener('click', function(event) {
+        const modal = document.getElementById('deleteModal');
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    });
+  </script>
+  
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

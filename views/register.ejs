@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký Website mới</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .code-block {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: monospace;
+      margin: 10px 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #3498db;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Đăng ký Website mới</h1>
+    
+    <div id="formContainer">
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="name">Tên Website</label>
+          <input type="text" id="name" name="name" required placeholder="Nhập tên website">
+        </div>
+        <div class="form-group">
+          <label for="url">URL Website</label>
+          <input type="url" id="url" name="url" required placeholder="https://example.com">
+        </div>
+        <button type="submit">Đăng ký</button>
+      </form>
+    </div>
+    
+    <div id="resultContainer" style="display: none;">
+      <div class="alert alert-success">
+        <p>Website đã được đăng ký thành công!</p>
+      </div>
+      
+      <h3>Thông tin Website</h3>
+      <div id="siteInfo">
+        <!-- Sẽ được điền bởi JavaScript -->
+      </div>
+      
+      <h3>Code để nhúng counter vào website của bạn:</h3>
+      <div class="code-block" id="embedCode">
+        <!-- Sẽ được điền bởi JavaScript -->
+      </div>
+      
+      <h3>Widget hiển thị lượt xem:</h3>
+      <div class="code-block" id="widgetCode">
+        <!-- Sẽ được điền bởi JavaScript -->
+      </div>
+      
+      <div id="widgetPreview">
+        <!-- Widget preview sẽ được hiển thị ở đây -->
+      </div>
+      
+      <a href="/" class="back-link">← Quay lại Dashboard</a>
+    </div>
+    
+    <div id="errorContainer" style="display: none;">
+      <div class="alert alert-error">
+        <p id="errorMessage"></p>
+      </div>
+      <button onclick="resetForm()">Thử lại</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('registerForm');
+    const formContainer = document.getElementById('formContainer');
+    const resultContainer = document.getElementById('resultContainer');
+    const errorContainer = document.getElementById('errorContainer');
+    const errorMessage = document.getElementById('errorMessage');
+    const siteInfo = document.getElementById('siteInfo');
+    const embedCode = document.getElementById('embedCode');
+    const widgetCode = document.getElementById('widgetCode');
+    const widgetPreview = document.getElementById('widgetPreview');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const nameInput = document.getElementById('name');
+      const urlInput = document.getElementById('url');
+      
+      const name = nameInput.value.trim();
+      const url = urlInput.value.trim();
+      
+      if (!name || !url) {
+        showError('Vui lòng điền đầy đủ thông tin.');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/counter/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, url }),
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Có lỗi xảy ra khi đăng ký website.');
+        }
+        
+        const data = await response.json();
+        showResult(data.data);
+      } catch (error) {
+        showError(error.message);
+      }
+    });
+
+    function showResult(data) {
+      formContainer.style.display = 'none';
+      resultContainer.style.display = 'block';
+      errorContainer.style.display = 'none';
+      
+      const { siteId, name, url } = data;
+      
+      siteInfo.innerHTML = `
+        <p><strong>Tên Website:</strong> ${name}</p>
+        <p><strong>URL:</strong> <a href="${url}" target="_blank">${url}</a></p>
+        <p><strong>Site ID:</strong> ${siteId}</p>
+      `;
+      
+      const scriptCode = `<script src="${window.location.origin}/counter.js" data-site-id="${siteId}"><\/script>`;
+      const widgetIframe = `<iframe src="${window.location.origin}/counter-widget/${siteId}" frameborder="0" style="height:30px;"></iframe>`;
+      
+      embedCode.textContent = scriptCode;
+      widgetCode.textContent = widgetIframe;
+      widgetPreview.innerHTML = widgetIframe;
+    }
+
+    function showError(message) {
+      formContainer.style.display = 'none';
+      resultContainer.style.display = 'none';
+      errorContainer.style.display = 'block';
+      
+      errorMessage.textContent = message;
+    }
+
+    function resetForm() {
+      formContainer.style.display = 'block';
+      resultContainer.style.display = 'none';
+      errorContainer.style.display = 'none';
+      
+      document.getElementById('name').value = '';
+      document.getElementById('url').value = '';
+    }
+  </script>
+</body>
+</html>
