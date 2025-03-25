@@ -1,0 +1,75 @@
+# CI/CD for Admin page and Client Page bonus Backend Page
+name: CI/CD
+
+on:
+  push:
+    branches: [ main, develop, feature/* ]
+    paths:
+      - '**/*.tsx'
+      - '**/*.ts'
+      - '**/*.js'
+      - '**/*.json'
+      - 'vite.config.*'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'client/**'
+      - 'server/**'
+      - 'admin/**'
+      - '**/*.xml'
+      - '**/*.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.tsx'
+      - '**/*.ts'
+      - '**/*.js'
+      - '**/*.json'
+      - 'vite.config.*'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'client/**'
+      - 'server/**'
+      - 'admin/**'
+  workflow_dispatch:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Remove node_modules and package-lock.json
+        run: |
+          rm -rf node_modules
+          rm -f package-lock.json
+
+      - name: Install dependencies and build server
+        run: |
+          cd server
+          npm ci
+          npm install --save-dev copyfiles
+          npm run build
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+
+
+  # Job to deploy the backend to Render
+  deploy-backend:
+    needs: [test-and-build]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Render
+        run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        env:
+          PORT: 5000
+          MONGO_URI: ${{ secrets.MONGO_URI }}

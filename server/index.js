@@ -30,7 +30,9 @@ app.use('/api/counter', counterRoutes);
 
 // Route cho trang chủ
 app.get('/', (req, res) => {
-  res.render('dashboard');
+  // Lấy baseUrl từ request hoặc sử dụng giá trị mặc định
+  const baseUrl = req.protocol + '://' + req.get('host');
+  res.render('dashboard', { baseUrl });
 });
 
 // Route để đăng ký website mới
@@ -41,7 +43,8 @@ app.get('/register', (req, res) => {
 // Route cho widget
 app.get('/counter-widget/:siteId', (req, res) => {
   const { siteId } = req.params;
-  res.render('widget', { siteId });
+  const baseUrl = req.protocol + '://' + req.get('host');
+  res.render('widget', { siteId, baseUrl });
 });
 
 // Route cho trang test

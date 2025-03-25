@@ -16,11 +16,11 @@
   // Lấy site ID từ thuộc tính data
   const siteId = currentScript.getAttribute('data-site-id');
   
-  // URL của API backend
-  const apiURL = (currentScript.src.match(/^https?:\/\/[^\/]+/i) || [''])[0];
+  // Lấy baseUrl từ src của script
+  const baseUrl = currentScript.src.replace(/\/counter\.js$/, '');
   
   console.log(`View Counter initialized for siteId: ${siteId}`);
-  console.log(`API URL detected: ${apiURL}`);
+  console.log(`Base URL: ${baseUrl}`);
   
   // Nếu không có siteId, không làm gì cả
   if (!siteId) {
@@ -28,9 +28,9 @@
     return;
   }
 
-  // Nếu không có apiURL, không làm gì cả
-  if (!apiURL) {
-    console.error('View Counter: Could not determine API URL');
+  // Nếu không có baseUrl, không làm gì cả
+  if (!baseUrl) {
+    console.error('View Counter: Could not determine base URL');
     return;
   }
 
@@ -81,10 +81,10 @@
         return;
       }
 
-      console.log(`Sending increment request to: ${apiURL}/api/counter/${siteId}/view`);
+      console.log(`Sending increment request to: ${baseUrl}/api/counter/${siteId}/view`);
       
       // Gửi request để tăng lượt xem
-      const response = await fetch(`${apiURL}/api/counter/${siteId}/view`, {
+      const response = await fetch(`${baseUrl}/api/counter/${siteId}/view`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,9 +114,9 @@
   // Hàm lấy thông tin counter
   async function getCounter() {
     try {
-      console.log(`Fetching counter data from: ${apiURL}/api/counter/${siteId}`);
+      console.log(`Fetching counter data from: ${baseUrl}/api/counter/${siteId}`);
       
-      const response = await fetch(`${apiURL}/api/counter/${siteId}`, {
+      const response = await fetch(`${baseUrl}/api/counter/${siteId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
