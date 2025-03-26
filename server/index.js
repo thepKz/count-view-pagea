@@ -28,22 +28,32 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Routes
 app.use('/api/counter', counterRoutes);
 
+// Hàm lấy baseUrl dựa vào môi trường
+function getBaseUrl(req) {
+  const host = req.get('host');
+  const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+  const protocol = isLocalhost ? 'http' : 'https';
+  return `${protocol}://${host}`;
+}
+
 // Route cho trang chủ
 app.get('/', (req, res) => {
-  // Lấy baseUrl từ request hoặc sử dụng giá trị mặc định
-  const baseUrl = req.protocol + '://' + req.get('host');
+  const baseUrl = getBaseUrl(req);
+  console.log('Base URL:', baseUrl);
   res.render('dashboard', { baseUrl });
 });
 
 // Route để đăng ký website mới
 app.get('/register', (req, res) => {
-  res.render('register');
+  const baseUrl = getBaseUrl(req);
+  res.render('register', { baseUrl });
 });
 
 // Route cho widget
 app.get('/counter-widget/:siteId', (req, res) => {
   const { siteId } = req.params;
-  const baseUrl = req.protocol + '://' + req.get('host');
+  const baseUrl = getBaseUrl(req);
+  console.log('Widget Base URL:', baseUrl);
   res.render('widget', { siteId, baseUrl });
 });
 

@@ -504,7 +504,15 @@
     // Hàm fetch dữ liệu từ API
     async function fetchCounters() {
       try {
-        const response = await fetch(`${baseUrl}/api/counter`);
+        console.log('Fetching counters from:', `${baseUrl}/api/counter`);
+        const response = await fetch(`${baseUrl}/api/counter`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors',
+          credentials: 'omit'
+        });
         if (!response.ok) {
           throw new Error('Không thể tải dữ liệu');
         }
@@ -519,8 +527,14 @@
     // Hàm xóa counter
     async function deleteCounter(siteId) {
       try {
+        console.log('Deleting counter:', `${baseUrl}/api/counter/${siteId}`);
         const response = await fetch(`${baseUrl}/api/counter/${siteId}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors',
+          credentials: 'omit'
         });
         if (!response.ok) {
           throw new Error('Không thể xóa counter');
